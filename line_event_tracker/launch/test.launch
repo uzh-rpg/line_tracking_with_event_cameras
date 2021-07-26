@@ -1,0 +1,8 @@
+<launch>
+
+    <node pkg="rosbag" type="play" name="player" output="screen" args="/home/alexdietsche/git/line_tracking_using_event_cameras/data/alex_tests/davis_camera/camera_6dof_line/camera_6dof_crossing_line.bag" />
+
+    <node name="line_event_tracker" pkg="line_event_tracker" type="line_event_tracker_node" output="screen">
+        <rosparam file="$(find line_event_tracker)/param/param.yaml" />
+    </node>
+</launch>

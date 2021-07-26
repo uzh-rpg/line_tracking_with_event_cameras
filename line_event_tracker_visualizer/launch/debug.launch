@@ -1,0 +1,21 @@
+<launch>
+  <!-- visualization -->
+  <node name="line_visualizer" pkg="line_event_tracker_visualizer" type="line_event_tracker_visualizer_node" output="screen" launch-prefix="gdb -ex run --args">
+    <rosparam file="$(find line_event_tracker)/param/davis_flying_room_rope_no_ir_equi.yaml" />
+    <param name="store_images" type="bool" value="true" />
+    <param name="show_all_lines" type="bool" value="false" />
+    <param name="images_dir" type="string" value="/home/alexdietsche/git/line_tracking_using_event_cameras/data/visualizer/" />
+    <param name="undistort" type="bool" value="true" />
+
+    <remap from="lines" to="/line_events_tracker_lines" />
+    <remap from="image" to="/dvs/image_raw" />
+    <remap from="line_visualization" to="line_visualization" />
+  </node>
+
+
+  <!-- display -->
+  <node name="image_view_left" pkg="rqt_image_view" type="rqt_image_view">
+  	<remap from="image" to="line_visualization"/>
+  </node>
+
+</launch>

@@ -1,0 +1,12 @@
+<launch>
+    <node name="line_event_tracker" pkg="line_event_tracker" type="line_event_tracker_node" output="screen">
+        <!-- Tracker parameters -->
+        <rosparam file="$(find line_event_tracker)/param/real_power_line.yaml" />
+
+        <!-- Camera parameters -->
+        <rosparam file="$(find line_event_tracker)/param/davis_flying_room_rope_ir_equi.yaml" />
+
+        <remap from="events" to="/dvs/events" />
+        <remap from="lines" to="/line_events_tracker_lines" />
+    </node>
+</launch>

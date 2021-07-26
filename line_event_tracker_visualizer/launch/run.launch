@@ -1,0 +1,28 @@
+<launch>
+  <!-- visualization -->
+  <node name="line_visualizer" pkg="line_event_tracker_visualizer" type="line_event_tracker_visualizer_node" output="screen">
+
+    <!-- Camera parameters -->
+    <rosparam file="$(find line_event_tracker)/param/davis_flying_room_rope_ir_equi.yaml" />
+
+    <param name="store_images" type="bool" value="false" />
+    <param name="show_all_lines" type="bool" value="true" />
+    <param name="show_reference_lines" type="bool" value="false" />
+    <param name="show_only_vertical_lines" type="bool" value="false" />
+    <param name="show_vel_cmd" type="bool" value="false" />
+    <param name="images_dir" type="string" value="/home/alexdietsche/git/line_tracking_using_event_cameras/data/visualizer/report/hw_test/square/closedloop_15/" />
+    <param name="undistort" type="bool" value="true" />
+    <param name="use_dvs_image" type="bool" value="true" />
+
+    <remap from="lines" to="/line_events_tracker_lines" />
+    <remap from="vel_cmd" to="/parrot/agiros_pilot/velocity_command" />
+    <remap from="image" to="/dvs/image_raw" />
+    <remap from="line_visualization" to="line_visualization" />
+  </node>
+
+  <!-- display -->
+  <node name="image_view_left" pkg="rqt_image_view" type="rqt_image_view">
+  	<remap from="image" to="line_visualization"/>
+  </node>
+
+</launch>

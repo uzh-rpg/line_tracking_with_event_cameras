@@ -1,0 +1,85 @@
+general:
+  height: 260                       # [px]
+  width: 346                        # [px]
+  undistort: true                   # [] undistort incoming events based on camera parameters
+  line_publish_rate: 40             # [hz]
+  periodical_check_frequency: 50    # [hz]
+  write_for_visualization: false    # [] store events belonging to lines and clusters for visualization purposes
+
+filters:
+  rf_period_same_pol: 8             # [ms] refactory period for events of same polarity
+  rf_period_opp_pol: 1              # [ms] refactory period for events of opposite polarity
+  nf_neighbourhood_size: 3          # [px] size of neighbourhood for neighbourhood filter
+  nf_min_num_events: 2              # [] minimum number of events in neighbourhood
+  nf_max_age: 70                    # [ms] maximum age of event in neighbourhood
+
+lines:
+  # promotion
+  promotion_threshold: 1.2          # [px] value of smallest eigen value for line promotion
+  promotion_num_events: 35          # [] minimum number of events in cluster for line promotion
+
+  # initialization
+  init_bin_size: 2                  # [px]
+  init_period: 90                   # [ms] initialization period
+  init_length: 100                  # [px] minimum length of line to pass initialization
+
+  # addition
+  addition_threshold: 1.8           # [px] max distance to inferred line for event to be added to line
+  addition_mid_point_distance: 1.0  # [] this parameter multiplied with the line distance is the max distance of the midpoint of the line to the incoming event
+
+  # merge
+  merge_angle_diff: deg(8.0)        # [rad] max angle difference of lines to be merged
+  merge_distance_threshold: 3.5     # [px] max distance of mid point to other inferred line
+  merge_distance_multiplier: 1.4    # []
+
+  # hibernation
+  hiberantion_newest_event_age: 50   # [ms] age of newest event, if older line goes into hibernation
+  hibernation_max_hibernation_time: 550  # [ms] max hibernation time, if line is in hibernation for more time it will be deleted
+  hibernation_density_threshold: 0.03  # [events / (px^2 * ms)] if line density lower, line goes into hibernation
+
+  # update
+  update_parameters_periodicity: 7   # [ms]
+  update_parameters_new_event_ratio: 0.01
+  update_parameters_num_events: 10
+  update_intersection_periodicity: 3  # [ms]
+
+  # cleanup
+  cleanup_event_age_threshold: 60     # [ms] max age of events before they're removed
+
+  # deletion
+  deletion_t_no_events: 200            # [ms] if there have not been any events added for longer than this threshold the line will be deleted
+  deletion_t_hibernate_no_events: 400  # [ms] if the line is hibernating and no events have been added for longer than this threshold the line will be deleted
+  deletion_out_of_frame_band: 7      # [px] band thinkness around frame used to remove lines than are moving out of frame
+  deletion_min_length: 45             # [px] min line length, if a line is shorter it will be deleted
+
+
+clusters:
+  # creation
+  creation_num_events: 7                # [] min number of event to create an event from a chain
+
+  # addition
+  addition_distance_line_treshold: 1.3  # [px] max distance to inferred line for an event to be added
+  addition_mid_point_threshold: 1.0     # [] this parameter multiplied with the line distance is the max distance of the midpoint of the line to the incoming event
+
+  # merge
+  merge_angle_diff: rad(15.0)           # [rad] max angle difference for clusters to be merged
+
+  #update
+  update_parameters_num_events: 8       # []
+
+  #cleanup
+  cleanup_event_age_threshold: 40       # [ms] max age of event before it is removed from cluster
+
+  # deletion
+  deletion_t_no_events: 50              # [ms] if there have not been any events added for longer than this threshold the cluster will be deleted
+
+chains:
+  # addition
+  neighbourhood_size: 3                 # [px] distance of
+  addition_distance_threshold: 0.8
+
+  max_chain_length: 10                  # [] max chain length, chain growth is stopped once the chain is larger
+
+  # deletion
+  deletion_max_event_age: 50            # [ms]
+

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>line_event_tracker_visualizer</name>
+  <version>0.0.0</version>
+  <description>The line_event_tracker_visualizer package</description>
+  <maintainer email="dietscha@ethz.ch">Alex Dietsche</maintainer>
+  <license>TODO</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>roscpp</depend>
+  <depend>sensor_msgs</depend>
+  <depend>cv_bridge</depend>
+  <depend>image_transport</depend>
+  <depend>line_event_tracker_msgs</depend>
+
+<!--  <build_depend>roscpp</build_depend>-->
+<!--  <build_depend>sensor_msgs</build_depend>-->
+<!--  <build_depend>cv_bridge</build_depend>-->
+<!--  <build_depend>image_transport</build_depend>-->
+
+<!--  <run_depend>roscpp</run_depend>-->
+<!--  <run_depend>sensor_msgs</run_depend>-->
+<!--  <run_depend>cv_bridge</run_depend>-->
+<!--  <run_depend>image_transport</run_depend>-->
+
+</package>

@@ -1,0 +1,7 @@
+<launch>
+    <node name="line_event_tracker_controller" pkg="line_event_tracker_controller" type="line_event_tracker_controller_node" output="screen">
+        <rosparam file="$(find line_event_tracker_controller)/param/param.yaml" />
+        <remap from="lines" to="/line_events_tracker_lines" />
+        <remap from="vel_cmd" to="/parrot/agiros_pilot/velocity_command" />
+    </node>
+</launch>

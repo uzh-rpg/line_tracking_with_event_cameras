@@ -1,0 +1,8 @@
+<launch>
+    <node name="line_event_tracker" pkg="line_event_tracker" type="line_event_tracker_node" output="screen" launch-prefix="gdb -ex run --args">
+        <rosparam file="$(find line_event_tracker)/param/param.yaml" />
+        <rosparam file="$(find line_event_tracker)/param/davis_ir_lense_50.yaml" />
+        <remap from="events" to="/dvs/events" />
+        <remap from="lines" to="/line_events_tracker_lines" />
+    </node>
+</launch>
