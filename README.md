@@ -1,5 +1,7 @@
 # Line Tracking with Event Cameras
 
+[![Power Line Tracking with Event Cameras](img/thumbnail_github.png)](https://www.youtube.com/watch?v=KnBJqed5qDI)
+
 ## Publication
 If you use this code in an academic context, please cite the following [IROS 2021 paper](http://rpg.ifi.uzh.ch/docs/IROS21_Dietsche.pdf).
 
