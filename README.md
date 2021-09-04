@@ -12,11 +12,15 @@ IEEE/RSJ Int. Conf. Intell. Robot. Syst. (IROS). 2021.
 ```
 @InProceedings{Dietsche2021
   author = {Dietsche, Alexander and Cioffi, Giovanni and Hidalgo-Carrio, Javier and Scaramuzza, Davide},
-  title = {Power Line Tracking with Event Cameras},
+  title = {PowerLine Tracking with Event Cameras},
   booktitle = {IEEE/RSJ Int. Conf. Intell. Robot. Syst. (IROS)},
   year = {2021}
 }
 ```
+
+## Dataset
+
+The dataset can be downloaded [here](https://download.ifi.uzh.ch/rpg/powerline_tracking_dataset/)
 
 ## Installation
 1. Clone the [rpg_dvs_ros](https://github.com/uzh-rpg/rpg_dvs_ros) repository and add the *dvs_msgs* package to your workspace.
