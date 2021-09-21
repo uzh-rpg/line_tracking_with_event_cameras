@@ -79,9 +79,6 @@ void Visualizer::imageCallback(const sensor_msgs::Image::ConstPtr& msg)
     for (auto const &line: lines_.lines)
     {
       if (line.state == line_event_tracker_msgs::Line::INITIALIZING) continue;
-      if (line.theta < -0.1396 || line.theta > 0.1396) continue;
-//      int mid_point_offset = 260 / 2 - line.pos_y;
-//      if (abs(mid_point_offset) > 25) continue;;
 
       if (line.length > max_length)
       {
@@ -152,8 +149,6 @@ void Visualizer::imageCallback(const sensor_msgs::Image::ConstPtr& msg)
         if (std::find(reference_lines.begin(), reference_lines.end(), line.id) != reference_lines.end()) {
           switch (line.state) {
             case line_event_tracker_msgs::Line::HIBERNATING:
-//              line_color = cv::Scalar(204, 102, 0);
-//              text_color = cv::Scalar(204, 102, 0);
               line_color = cv::Scalar(102, 204, 0);
               text_color = cv::Scalar(102, 204, 0);
               break;
