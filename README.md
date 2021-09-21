@@ -51,3 +51,13 @@ To run the tracker with the visualization:
 ```
 roslaunch line_event_tracker run_with_visualizer.launch
 ```
+
+## Power line demo
+To run power line demo download the rosbag of flight2 [here](https://download.ifi.uzh.ch/rpg/powerline_tracking_dataset/) and run:
+```
+roslaunch line_event_tracker run_with_visualizer.launch
+
+rosbag play -s 15 flight2_2020-12-17-17-52-17.bag 
+```
+
+In the rqt window select `/line_visualization` in the drop down menu.
