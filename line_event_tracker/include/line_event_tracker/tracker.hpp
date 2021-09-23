@@ -200,7 +200,7 @@ private:
   std::deque<Event> events_;
 
   // testing
-  dvs_msgs::EventArray test_events_;
+  std::string debug_dir_;
   int write_counter_;
 
   line_event_tracker_msgs::Lines lines_msg_;
@@ -232,20 +232,6 @@ private:
   long unique_cluster_id_;
 
   std::atomic<double> curr_time_;
-
-  // profiling
-//  Profiler profiler_process_events_;
-//  Profiler profiler_undistort_;
-//  Profiler profiler_filter_;
-//  Profiler profiler_add_to_line_;
-//  Profiler profiler_add_to_cluster_;
-//  Profiler profiler_create_cluster_;
-
-  // TESTING
-//  std::vector<int> num_lines_;
-//  std::vector<int> num_clusters_;
-  std::vector<double> mean_line_lifetime_;
-
 
   std::chrono::steady_clock::time_point start_time_point_;
   bool events_received_ = false;

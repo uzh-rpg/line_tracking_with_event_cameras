@@ -23,6 +23,7 @@ Tracker::Tracker(ros::NodeHandle &nh, ros::NodeHandle &pnh): nh_(nh), pnh_(pnh),
   options_.line_options_ = readLineOptions(pnh_);
   options_.cluster_options_ = readClusterOptions(pnh_);
   readCameraInfo(pnh_, K_, D_, distortion_model_);
+  debug_dir_ = "/path_to_debug_directory/";
 
   // mask bounds
   mask_x_lower_ = double(options_.width_) / 2 - options_.mask_width_ / 2;
@@ -830,7 +831,7 @@ bool Tracker::lineOutOfFrame(const Line &line) const
 void Tracker::writeChain(std::deque<Event> &chain)
 {
 
-  std::ofstream chain_file("/home/alexdietsche/git/line_tracking_using_event_cameras/data/temp/chain.txt", std::ofstream::trunc);
+  std::ofstream chain_file(debug_dir_ + "chain.txt", std::ofstream::trunc);
 
   for (auto const & ev : chain)
   {
@@ -842,7 +843,7 @@ void Tracker::writeChain(std::deque<Event> &chain)
 
 void Tracker::writeCluster(long cluster_id)
 {
-  std::ofstream cluster_file("/home/alexdietsche/git/line_tracking_using_event_cameras/data/temp/cluster.txt", std::ofstream::trunc);
+  std::ofstream cluster_file(debug_dir_ + "cluster.txt", std::ofstream::trunc);
   auto &cluster = clusters_.at(cluster_id);
 
   for (auto const & ev : cluster.getEvents())
@@ -855,7 +856,7 @@ void Tracker::writeCluster(long cluster_id)
 
 void Tracker::writeAllClusters()
 {
-  std::ofstream cluster_file("/home/alexdietsche/git/line_tracking_using_event_cameras/data/temp/cluster.txt", std::ofstream::trunc);
+  std::ofstream cluster_file(debug_dir_ + "cluster.txt", std::ofstream::trunc);
 
   for (auto const &entry : clusters_)
   {
@@ -872,8 +873,8 @@ void Tracker::writeAllClusters()
 
 void Tracker::writeLine(long line_id)
 {
-  std::ofstream line_file("/home/alexdietsche/git/line_tracking_using_event_cameras/data/temp/line.txt", std::ofstream::trunc);
-  std::ofstream line_events_file("/home/alexdietsche/git/line_tracking_using_event_cameras/data/temp/line_events.txt", std::ofstream::trunc);
+  std::ofstream line_file(debug_dir_ + "line.txt", std::ofstream::trunc);
+  std::ofstream line_events_file(debug_dir_ + "line_events.txt", std::ofstream::trunc);
 
   auto &line = lines_.at(line_id);
 
@@ -894,8 +895,8 @@ void Tracker::writeLine(long line_id)
 
 void Tracker::writeAllLines()
 {
-  std::ofstream lines_file("/home/alexdietsche/git/line_tracking_using_event_cameras/data/temp/lines.txt", std::ofstream::trunc);
-  std::ofstream lines_events_file("/home/alexdietsche/git/line_tracking_using_event_cameras/data/temp/lines_events.txt", std::ofstream::trunc);
+  std::ofstream lines_file(debug_dir_ + "lines.txt", std::ofstream::trunc);
+  std::ofstream lines_events_file(debug_dir_ + "lines_events.txt", std::ofstream::trunc);
 
   for (auto const &entry : lines_)
   {
@@ -924,11 +925,11 @@ void Tracker::writeLines(double t)
 
   if (write_counter_ == 0)
   {
-    lines_file.open("/home/alexdietsche/git/line_tracking_using_event_cameras/data/temp/lines.txt", std::ofstream::trunc);
+    lines_file.open(debug_dir_ + "lines.txt", std::ofstream::trunc);
   }
   else
   {
-    lines_file.open("/home/alexdietsche/git/line_tracking_using_event_cameras/data/temp/lines.txt", std::ios_base::app);
+    lines_file.open(debug_dir_ + "lines.txt", std::ios_base::app);
   }
 
   std::string lines;
@@ -954,11 +955,11 @@ void Tracker::writeLineEvents()
 
   if (write_counter_ == 0)
   {
-    events_file.open("/home/alexdietsche/git/line_tracking_using_event_cameras/data/temp/events.txt", std::ofstream::trunc);
+    events_file.open(debug_dir_ + "events.txt", std::ofstream::trunc);
   }
   else
   {
-    events_file.open("/home/alexdietsche/git/line_tracking_using_event_cameras/data/temp/events.txt", std::ios_base::app);
+    events_file.open(debug_dir_ + "events.txt", std::ios_base::app);
   }
 
   // write line events
@@ -982,11 +983,11 @@ void Tracker::writeClusterEvents()
 
   if (write_counter_ == 0)
   {
-    events_file.open("/home/alexdietsche/git/line_tracking_using_event_cameras/data/temp/events.txt", std::ofstream::trunc);
+    events_file.open(debug_dir_ + "events.txt", std::ofstream::trunc);
   }
   else
   {
-    events_file.open("/home/alexdietsche/git/line_tracking_using_event_cameras/data/temp/events.txt", std::ios_base::app);
+    events_file.open(debug_dir_ + "events.txt", std::ios_base::app);
   }
 
   // write cluster events
@@ -1009,11 +1010,11 @@ void Tracker::writeClusters(double t)
 
   if (write_counter_ == 0)
   {
-    clusters_file.open("/home/alexdietsche/git/line_tracking_using_event_cameras/data/temp/clusters.txt", std::ofstream::trunc);
+    clusters_file.open(debug_dir_ + "clusters.txt", std::ofstream::trunc);
   }
   else
   {
-    clusters_file.open("/home/alexdietsche/git/line_tracking_using_event_cameras/data/temp/clusters.txt", std::ios_base::app);
+    clusters_file.open(debug_dir_ + "clusters.txt", std::ios_base::app);
   }
 
   std::string clusters;
