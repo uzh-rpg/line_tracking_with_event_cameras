@@ -23,13 +23,22 @@ IEEE/RSJ Int. Conf. Intell. Robot. Syst. (IROS). 2021.
 The dataset can be downloaded [here](https://download.ifi.uzh.ch/rpg/powerline_tracking_dataset/)
 
 ## Installation
-1. Clone the [rpg_dvs_ros](https://github.com/uzh-rpg/rpg_dvs_ros) repository and add the *dvs_msgs* package to your workspace.
-2. Clone this repository and add it to your workspace.
-3. Build the tracker:
+
+The code has been tested on Ubuntu 18.04 and ROS Melodic.
+
+1. Create a catkin workspace:
+```
+mkdir -p line_tracking_with_event_cameras_ws/src
+cd line_tracking_with_event_cameras_ws
+catkin init
+```
+2. Add the *dvs_msgs* package, from [rpg_dvs_ros](https://github.com/uzh-rpg/rpg_dvs_ros), to your workspace.
+3. Clone this repository and add it to your workspace.
+4. Build the tracker:
 ```
 catkin build line_event_tracker 
 ```
-4. If you want to visualize the lines, build the visualization package as well:
+5. If you want to visualize the lines, build the visualization package as well:
 ```
 catkin build line_event_tracker_visualizer
 ```
