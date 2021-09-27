@@ -4,6 +4,7 @@ general:
   undistort: true
   line_publish_rate: 40
   periodical_check_frequency: 50   # []
+  write_for_visualization: false    # [] store events belonging to lines and clusters for visualization purposes
 
 hw_test:
   mask_height: 260                  # [px]
@@ -13,7 +14,6 @@ filters:
   rf_period_same_pol: 10            # [ms] refactory period for events of same polarity
   rf_period_opp_pol: 1              # [ms] refactory period for events of opposite polarity
   nf_neighbourhood_size: 5          # [px] size of neighbourhood for neighbourhood filter
-#  nf_min_num_events: 3              # [] minimum number of events in neighbourhood
   nf_min_num_events: 2              # [] minimum number of events in neighbourhood
   nf_max_age: 70                     # [ms] maximum age of event in neighbourhood
 

@@ -26,6 +26,7 @@ catkin_package(
 
 include_directories(
   include
+  ${OpenCV_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIR}
   ${catkin_INCLUDE_DIRS}
 )

@@ -23,6 +23,7 @@ Tracker::Tracker(ros::NodeHandle &nh, ros::NodeHandle &pnh): nh_(nh), pnh_(pnh),
   options_.line_options_ = readLineOptions(pnh_);
   options_.cluster_options_ = readClusterOptions(pnh_);
   readCameraInfo(pnh_, K_, D_, distortion_model_);
+  debug_dir_ = "/path_to_debug_directory/";
 
   // mask bounds
   mask_x_lower_ = double(options_.width_) / 2 - options_.mask_width_ / 2;
@@ -59,102 +60,6 @@ Tracker::~Tracker()
   event_publisher_.shutdown();
   line_publisher_.shutdown();
 
-//  double sum_lines = std::accumulate(num_lines_.begin(), num_lines_.end(), 0.0);
-//  double mean_lines = sum_lines / num_lines_.size();
-//
-//  double sum_clusters = std::accumulate(num_clusters_.begin(), num_clusters_.end(), 0.0);
-//  double mean_clusters = sum_clusters / num_clusters_.size();
-//
-//  std::cout << "Mean num lines: " << mean_lines << std::endl;
-//  std::cout << "Mean num clusters: " << mean_clusters << std::endl;
-
-//  auto process_event_stream_duration = profiler_process_events_.getDurationsStream();
-//  auto filter_stream_durations = profiler_filter_.getDurationsStream();
-//  auto add_to_line_stream_durations = profiler_add_to_line_.getDurationsStream();
-//  auto add_to_cluster_stream_durations = profiler_add_to_cluster_.getDurationsStream();
-//  auto create_cluster_stream_durations = profiler_create_cluster_.getDurationsStream();
-//
-//  auto process_duration = profiler_process_events_.getDurationsLinesClusters();
-//  auto filter_durations = profiler_filter_.getDurationsLinesClusters();
-//  auto add_to_line_durations = profiler_add_to_line_.getDurationsLinesClusters();
-//  auto add_to_cluster_durations = profiler_add_to_cluster_.getDurationsLinesClusters();
-//  auto create_cluster_durations = profiler_create_cluster_.getDurationsLinesClusters();
-//
-//  std::ofstream profiler_file("/home/alexdietsche/git/line_tracking_using_event_cameras/data/temp/profile_lines_clusters.txt", std::ofstream::trunc);
-//
-//  profiler_file << "type" << " " << "number_lines_clusters" << " " << "duration" << "\n";
-//
-//  for (auto const & e : process_duration)
-//  {
-//    profiler_file << "0" << " " << e.first << " " <<  e.second << "\n";
-//  }
-//
-//  for (auto const & e : filter_durations)
-//  {
-//    profiler_file << "1" << " " << e.first << " " <<  e.second << "\n";
-//  }
-//
-//  for (auto const & e : add_to_line_durations)
-//  {
-//    profiler_file << "2" << " " << e.first << " " <<  e.second << "\n";
-//  }
-//
-//  for (auto const & e : add_to_cluster_durations)
-//  {
-//    profiler_file << "3" << " " << e.first << " " <<  e.second << "\n";
-//  }
-//
-//  for (auto const & e : create_cluster_durations)
-//  {
-//    profiler_file << "4" << " " << e.first << " " <<  e.second << "\n";
-//  }
-
-
-//  profiler_file << "type" << " " << "bandwidth" << " " << "duration" << "\n";
-
-//  for (auto const & e : process_event_stream_duration)
-//  {
-//    for (auto l : e.second)
-//    {
-//      profiler_file << "0" << " " << e.first << " " << l << "\n";
-//    }
-//  }
-//
-//  for (auto const & e : filter_stream_durations)
-//  {
-//    for (auto l : e.second)
-//    {
-//      profiler_file << "1" << " " << e.first << " " << l << "\n";
-//    }
-//  }
-//
-//  for (auto const & e : add_to_line_stream_durations)
-//  {
-//    for (auto l : e.second)
-//    {
-//      profiler_file << "2" << " " << e.first << " " << l << "\n";
-//    }
-//  }
-//
-//  for (auto const & e : add_to_cluster_stream_durations)
-//  {
-//    for (auto l : e.second)
-//    {
-//      profiler_file << "3" << " " << e.first << " " << l << "\n";
-//    }
-//  }
-//
-//  for (auto const & e : create_cluster_stream_durations)
-//  {
-//    for (auto l : e.second)
-//    {
-//      profiler_file << "4" << " " << e.first << " " << l << "\n";
-//    }
-//  }
-//
-//
-//  profiler_file.close();
-
 }
 
 void Tracker::eventsCallback(const dvs_msgs::EventArray::ConstPtr &msg)
@@ -162,13 +67,11 @@ void Tracker::eventsCallback(const dvs_msgs::EventArray::ConstPtr &msg)
 
   if (options_.undistort_)
   {
-    // profiling
     if (!events_received_)
     {
       start_time_point_ = std::chrono::steady_clock::now();
     }
 
-//    profiler_undistort_.start();
     events_received_ = true;
 
     cv::Mat events_distorted(msg->events.size(), 1, CV_32FC2);
@@ -188,9 +91,6 @@ void Tracker::eventsCallback(const dvs_msgs::EventArray::ConstPtr &msg)
       cv::undistortPoints(events_distorted, events_undistorted, K_, D_, cv::Mat::eye(3, 3, CV_32FC1), K_);
     }
 
-    // profiling
-//    profiler_undistort_.stop();
-
     Event ev;
     for (int i = 0; i < msg->events.size(); ++i)
     {
@@ -202,12 +102,6 @@ void Tracker::eventsCallback(const dvs_msgs::EventArray::ConstPtr &msg)
       {
         continue;
       }
-
-      // mask
-//      if (ev.x > mask_x_upper_ || ev.x < mask_x_lower_ || ev.y > mask_y_upper_ || ev.y < mask_y_lower_)
-//      {
-//        continue;
-//      }
 
       ev.t = msg->events[i].ts.toSec() * 1000;
       ev.p = msg->events[i].polarity;
@@ -240,51 +134,25 @@ void Tracker::processEvents()
   {
     waitForEvent(ev);
 
-//    int num_lines_clusters = lines_.size() + clusters_.size();
-//    int num_lines_clusters = lines_.size();
-//    int num_lines_clusters = clusters_.size();
-
-
-//    num_lines_.push_back(lines_.size());
-//    num_clusters_.push_back(clusters_.size());
-
-//    profiler_process_events_.start();
-//    profiler_filter_.start();
     if (!filterEvent(ev))
     {
-//      profiler_filter_.stop(num_lines_clusters);
-//      profiler_process_events_.stop(num_lines_clusters);
       continue;
     }
-//    profiler_filter_.stop(num_lines_clusters);
 
-//    profiler_add_to_line_.start();
     if (tryAddToLine(ev))
     {
-//      profiler_add_to_line_.stop(num_lines_clusters);
-//      profiler_process_events_.stop(num_lines_clusters);
       continue;
     }
-//    profiler_add_to_line_.stop(num_lines_clusters);
 
-//    profiler_add_to_cluster_.start();
     if (tryAddToCluster(ev))
     {
-//      profiler_add_to_cluster_.stop(num_lines_clusters);
-//      profiler_process_events_.stop(num_lines_clusters);
       continue;
     }
-//    profiler_add_to_cluster_.stop(num_lines_clusters);
 
-//    profiler_create_cluster_.start();
     if (tryCreateCluster(ev))
     {
-//      profiler_process_events_.stop(num_lines_clusters);
-//      profiler_create_cluster_.stop(num_lines_clusters);
       continue;
     }
-//    profiler_process_events_.stop(num_lines_clusters);
-//    profiler_create_cluster_.stop(num_lines_clusters);
   }
 }
 
@@ -963,7 +831,7 @@ bool Tracker::lineOutOfFrame(const Line &line) const
 void Tracker::writeChain(std::deque<Event> &chain)
 {
 
-  std::ofstream chain_file("/home/alexdietsche/git/line_tracking_using_event_cameras/data/temp/chain.txt", std::ofstream::trunc);
+  std::ofstream chain_file(debug_dir_ + "chain.txt", std::ofstream::trunc);
 
   for (auto const & ev : chain)
   {
@@ -975,7 +843,7 @@ void Tracker::writeChain(std::deque<Event> &chain)
 
 void Tracker::writeCluster(long cluster_id)
 {
-  std::ofstream cluster_file("/home/alexdietsche/git/line_tracking_using_event_cameras/data/temp/cluster.txt", std::ofstream::trunc);
+  std::ofstream cluster_file(debug_dir_ + "cluster.txt", std::ofstream::trunc);
   auto &cluster = clusters_.at(cluster_id);
 
   for (auto const & ev : cluster.getEvents())
@@ -988,7 +856,7 @@ void Tracker::writeCluster(long cluster_id)
 
 void Tracker::writeAllClusters()
 {
-  std::ofstream cluster_file("/home/alexdietsche/git/line_tracking_using_event_cameras/data/temp/cluster.txt", std::ofstream::trunc);
+  std::ofstream cluster_file(debug_dir_ + "cluster.txt", std::ofstream::trunc);
 
   for (auto const &entry : clusters_)
   {
@@ -1005,8 +873,8 @@ void Tracker::writeAllClusters()
 
 void Tracker::writeLine(long line_id)
 {
-  std::ofstream line_file("/home/alexdietsche/git/line_tracking_using_event_cameras/data/temp/line.txt", std::ofstream::trunc);
-  std::ofstream line_events_file("/home/alexdietsche/git/line_tracking_using_event_cameras/data/temp/line_events.txt", std::ofstream::trunc);
+  std::ofstream line_file(debug_dir_ + "line.txt", std::ofstream::trunc);
+  std::ofstream line_events_file(debug_dir_ + "line_events.txt", std::ofstream::trunc);
 
   auto &line = lines_.at(line_id);
 
@@ -1027,8 +895,8 @@ void Tracker::writeLine(long line_id)
 
 void Tracker::writeAllLines()
 {
-  std::ofstream lines_file("/home/alexdietsche/git/line_tracking_using_event_cameras/data/temp/lines.txt", std::ofstream::trunc);
-  std::ofstream lines_events_file("/home/alexdietsche/git/line_tracking_using_event_cameras/data/temp/lines_events.txt", std::ofstream::trunc);
+  std::ofstream lines_file(debug_dir_ + "lines.txt", std::ofstream::trunc);
+  std::ofstream lines_events_file(debug_dir_ + "lines_events.txt", std::ofstream::trunc);
 
   for (auto const &entry : lines_)
   {
@@ -1057,11 +925,11 @@ void Tracker::writeLines(double t)
 
   if (write_counter_ == 0)
   {
-    lines_file.open("/home/alexdietsche/git/line_tracking_using_event_cameras/data/temp/lines.txt", std::ofstream::trunc);
+    lines_file.open(debug_dir_ + "lines.txt", std::ofstream::trunc);
   }
   else
   {
-    lines_file.open("/home/alexdietsche/git/line_tracking_using_event_cameras/data/temp/lines.txt", std::ios_base::app);
+    lines_file.open(debug_dir_ + "lines.txt", std::ios_base::app);
   }
 
   std::string lines;
@@ -1087,11 +955,11 @@ void Tracker::writeLineEvents()
 
   if (write_counter_ == 0)
   {
-    events_file.open("/home/alexdietsche/git/line_tracking_using_event_cameras/data/temp/events.txt", std::ofstream::trunc);
+    events_file.open(debug_dir_ + "events.txt", std::ofstream::trunc);
   }
   else
   {
-    events_file.open("/home/alexdietsche/git/line_tracking_using_event_cameras/data/temp/events.txt", std::ios_base::app);
+    events_file.open(debug_dir_ + "events.txt", std::ios_base::app);
   }
 
   // write line events
@@ -1115,11 +983,11 @@ void Tracker::writeClusterEvents()
 
   if (write_counter_ == 0)
   {
-    events_file.open("/home/alexdietsche/git/line_tracking_using_event_cameras/data/temp/events.txt", std::ofstream::trunc);
+    events_file.open(debug_dir_ + "events.txt", std::ofstream::trunc);
   }
   else
   {
-    events_file.open("/home/alexdietsche/git/line_tracking_using_event_cameras/data/temp/events.txt", std::ios_base::app);
+    events_file.open(debug_dir_ + "events.txt", std::ios_base::app);
   }
 
   // write cluster events
@@ -1142,11 +1010,11 @@ void Tracker::writeClusters(double t)
 
   if (write_counter_ == 0)
   {
-    clusters_file.open("/home/alexdietsche/git/line_tracking_using_event_cameras/data/temp/clusters.txt", std::ofstream::trunc);
+    clusters_file.open(debug_dir_ + "clusters.txt", std::ofstream::trunc);
   }
   else
   {
-    clusters_file.open("/home/alexdietsche/git/line_tracking_using_event_cameras/data/temp/clusters.txt", std::ios_base::app);
+    clusters_file.open(debug_dir_ + "clusters.txt", std::ios_base::app);
   }
 
   std::string clusters;
