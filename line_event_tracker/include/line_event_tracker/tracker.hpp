@@ -69,7 +69,7 @@ public:
 
 
 private:
-
+  cv::Mat pixelToWorldframe(const double u, double v);
   /**
    * @brief get oldest event from deque and process it
    */
@@ -209,6 +209,7 @@ private:
   std::string distortion_model_;
   cv::Mat K_;
   cv::Mat D_;
+  cv::Mat R_WC = cv::Mat(3, 3, CV_64F);
 
   // mask
   double mask_x_upper_;
