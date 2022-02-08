@@ -21,8 +21,8 @@
   </node>
 
   <!-- display -->
-  <node name="image_view_left" pkg="rqt_image_view" type="rqt_image_view">
+  <!--node name="image_view_left" pkg="rqt_image_view" type="rqt_image_view">
   	<remap from="image" to="line_visualization"/>
-  </node>
+  </node-->
 
 </launch>
