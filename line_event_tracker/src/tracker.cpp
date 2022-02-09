@@ -30,7 +30,7 @@ namespace line_event_tracker {
         mask_y_lower_ = double(options_.height_) / 2 - options_.mask_height_ / 2;
         mask_y_upper_ = double(options_.height_) / 2 + options_.mask_height_ / 2;
 
-        sae_ = std::vector<Eigen::MatrixXd>(2, Eigen::MatrixXd::Constant(options_.width_, options_.height_, -options_.filter_nf_max_age_));
+        sae_ = std::vector<Eigen::MatrixXd>(2,  Eigen::MatrixXd::Constant(options_.width_, options_.height_, -options_.filter_nf_max_age_));
         sae_unasigned_ = std::vector<Eigen::MatrixXd>(2, Eigen::MatrixXd::Constant(options_.width_, options_.height_, -options_.chain_max_event_age_));
 
         event_subscriber_ = nh_.subscribe("events", 0, &Tracker::eventsCallback, this);
@@ -50,16 +50,17 @@ namespace line_event_tracker {
         linePublisherThread.detach();
 
         // load transformation from body to camera
-        R_WC.at<double>(0, 0) = 1.73205080757 / 2;
+        // Notice this shoudld be in camera coordiante convention
+        R_WC.at<double>(0, 0) = 1.0;
         R_WC.at<double>(0, 1) = 0.0;
-        R_WC.at<double>(0, 2) = 0.5;
+        R_WC.at<double>(0, 2) = 0.0;
 
         R_WC.at<double>(1, 0) = 0.0;
-        R_WC.at<double>(1, 2) = 1.0;
-        R_WC.at<double>(2, 2) = 0.0;
+        R_WC.at<double>(1, 1) = 1.73205080757 / 2;
+        R_WC.at<double>(1, 2) = -0.5;
 
-        R_WC.at<double>(2, 0) = -0.5;
-        R_WC.at<double>(2, 1) = 0.0;
+        R_WC.at<double>(2, 0) = 0.0;
+        R_WC.at<double>(2, 1) = 0.5;
         R_WC.at<double>(2, 2) = 1.73205080757 / 2;
     }
 
@@ -77,7 +78,7 @@ namespace line_event_tracker {
         cv::Mat pixel = cv::Mat(3, 1, CV_64F, pixel_point);
         cv::Mat c_P = cv::Mat(3, 1, CV_64F);
         c_P = R_WC * K_.inv() * pixel;
-        c_P = c_P / c_P.at<double>(2) * p_Z;
+        c_P = c_P / c_P.at<double>(1) * p_Z;
         return c_P;
     }
 
@@ -209,18 +210,20 @@ namespace line_event_tracker {
                         line.length = entry.second.getLength();
                         line.state = static_cast<unsigned int>(entry.second.getState());
 
+                        // Be causious that the camera frame axes are different than what we used for drones!
+                        // Camera z: World x, Camera x: World y, Camera y: World z
                         double u_end_point_1 = line.c_pos_x + line.length * std::sin(line.theta) / 2;
                         double v_end_point_1 = line.c_pos_y + line.length * std::cos(line.theta) / 2;
                         double u_end_point_2 = line.c_pos_x - line.length * std::sin(line.theta) / 2;
                         double v_end_point_2 = line.c_pos_y - line.length * std::cos(line.theta) / 2;
 
-                        line.w_pos_x_end_1 = pixelToWorldframe(u_end_point_1, v_end_point_1).at<double>(0);
-                        line.w_pos_y_end_1 = pixelToWorldframe(u_end_point_1, v_end_point_1).at<double>(1);
-                        line.w_pos_z_end_1 = pixelToWorldframe(u_end_point_1, v_end_point_1).at<double>(2);
+                        line.w_pos_y_end_1 = -pixelToWorldframe(u_end_point_1, v_end_point_1).at<double>(0);
+                        line.w_pos_z_end_1 = pixelToWorldframe(u_end_point_1, v_end_point_1).at<double>(1);
+                        line.w_pos_x_end_1 = pixelToWorldframe(u_end_point_1, v_end_point_1).at<double>(2);
 
-                        line.w_pos_x_end_2 = pixelToWorldframe(u_end_point_2, v_end_point_2).at<double>(0);
-                        line.w_pos_y_end_2 = pixelToWorldframe(u_end_point_2, v_end_point_2).at<double>(1);
-                        line.w_pos_z_end_2 = pixelToWorldframe(u_end_point_2, v_end_point_2).at<double>(2);
+                        line.w_pos_y_end_2 = -pixelToWorldframe(u_end_point_2, v_end_point_2).at<double>(0);
+                        line.w_pos_z_end_2 = pixelToWorldframe(u_end_point_2, v_end_point_2).at<double>(1);
+                        line.w_pos_x_end_2 = pixelToWorldframe(u_end_point_2, v_end_point_2).at<double>(2);
 
                         lines_msg_.lines.push_back(line);
                     }
