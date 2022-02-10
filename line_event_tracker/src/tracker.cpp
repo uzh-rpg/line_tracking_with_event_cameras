@@ -56,11 +56,11 @@ namespace line_event_tracker {
         R_WC.at<double>(0, 2) = 0.0;
 
         R_WC.at<double>(1, 0) = 0.0;
-        R_WC.at<double>(1, 1) = 1.73205080757 / 2;
-        R_WC.at<double>(1, 2) = -0.5;
+        R_WC.at<double>(1, 1) = 1.73205080757 / 2; 
+        R_WC.at<double>(1, 2) = 0.5;
 
         R_WC.at<double>(2, 0) = 0.0;
-        R_WC.at<double>(2, 1) = 0.5;
+        R_WC.at<double>(2, 1) = -0.5;
         R_WC.at<double>(2, 2) = 1.73205080757 / 2;
     }
 
@@ -74,7 +74,7 @@ namespace line_event_tracker {
 
     cv::Mat Tracker::pixelToWorldframe(const double u, double v) {
         double pixel_point[3] = {u, v, 1.0};
-        double p_Z = -1.15470053838;// -1 / cos(30)
+        double p_Z = 1.0;
         cv::Mat pixel = cv::Mat(3, 1, CV_64F, pixel_point);
         cv::Mat c_P = cv::Mat(3, 1, CV_64F);
         c_P = R_WC * K_.inv() * pixel;
@@ -217,12 +217,18 @@ namespace line_event_tracker {
                         double u_end_point_2 = line.c_pos_x - line.length * std::sin(line.theta) / 2;
                         double v_end_point_2 = line.c_pos_y - line.length * std::cos(line.theta) / 2;
 
+                        double aax, aay, aaz;
+                        aay = -pixelToWorldframe(173.0, 130.0).at<double>(0);
+                        aaz = -pixelToWorldframe(173.0, 130.0).at<double>(1);
+                        aax = pixelToWorldframe(173.0, 130.0).at<double>(2);
+                        std::cout << aax << aay << aaz << std::endl;
+
                         line.w_pos_y_end_1 = -pixelToWorldframe(u_end_point_1, v_end_point_1).at<double>(0);
-                        line.w_pos_z_end_1 = pixelToWorldframe(u_end_point_1, v_end_point_1).at<double>(1);
+                        line.w_pos_z_end_1 = -pixelToWorldframe(u_end_point_1, v_end_point_1).at<double>(1);
                         line.w_pos_x_end_1 = pixelToWorldframe(u_end_point_1, v_end_point_1).at<double>(2);
 
                         line.w_pos_y_end_2 = -pixelToWorldframe(u_end_point_2, v_end_point_2).at<double>(0);
-                        line.w_pos_z_end_2 = pixelToWorldframe(u_end_point_2, v_end_point_2).at<double>(1);
+                        line.w_pos_z_end_2 = -pixelToWorldframe(u_end_point_2, v_end_point_2).at<double>(1);
                         line.w_pos_x_end_2 = pixelToWorldframe(u_end_point_2, v_end_point_2).at<double>(2);
 
                         lines_msg_.lines.push_back(line);
