@@ -15,7 +15,11 @@ float64 w_pos_y_end_1   # world y coordianate of midpoint
 float64 w_pos_z_end_1   # world z coordianate of midpoint 
 float64 w_pos_x_end_2   # world x coordianate of midpoint    
 float64 w_pos_y_end_2   # world y coordianate of midpoint            
-float64 w_pos_z_end_2   # world y coordianate of midpoint            
+float64 w_pos_z_end_2   # world y coordianate of midpoint
+float64 u_end_point_1
+float64 v_end_point_1
+float64 u_end_point_2
+float64 v_end_point_2
 float64 theta           # angle wrt to y axis [rad]
 float64 vel_x           # x component of velocity of midpoint [px/s]
 float64 vel_y           # y component of velocity of midpoint [px/s]
