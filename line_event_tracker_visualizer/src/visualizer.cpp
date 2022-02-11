@@ -102,11 +102,11 @@ void Visualizer::imageCallback(const sensor_msgs::Image::ConstPtr& msg)
       }
 
       // calculate end points
-      auto mid_point = cv::Point2d(line.c_pos_x, line.c_pos_y);
-      auto end_point_1 = cv::Point2d(line.c_pos_x + line.length * std::sin(line.theta) / 2,
-                                     line.c_pos_y + line.length * std::cos(line.theta) / 2);
-      auto end_point_2 = cv::Point2d(line.c_pos_x - line.length * std::sin(line.theta) / 2,
-                                     line.c_pos_y - line.length * std::cos(line.theta) / 2);
+      auto mid_point = cv::Point2d(line.p_pos_x, line.p_pos_y);
+      auto end_point_1 = cv::Point2d(line.p_pos_x + line.length * std::sin(line.theta) / 2,
+                                     line.p_pos_y + line.length * std::cos(line.theta) / 2);
+      auto end_point_2 = cv::Point2d(line.p_pos_x - line.length * std::sin(line.theta) / 2,
+                                     line.p_pos_y - line.length * std::cos(line.theta) / 2);
 
 
       if (!use_dvs_image_)

@@ -72,7 +72,7 @@ void Controller::update()
           if (line.state == line_event_tracker_msgs::Line::INITIALIZING) continue;
 
           if (line.theta < theta_lower_ || line.theta > theta_upper_) continue;
-          int mid_point_offset = 260 / 2 - line.c_pos_y;
+          int mid_point_offset = 260 / 2 - line.p_pos_y;
           if (abs(mid_point_offset) > 25) continue;;
 
           if (line.length > max_length)
@@ -88,7 +88,7 @@ void Controller::update()
     {
 
       double yaw_vel = 0.0;
-      double mean_mid_point_x = longest_line.c_pos_x;
+      double mean_mid_point_x = longest_line.p_pos_x;
 
       // PD controller
       double e = lines_.width / 2.0 - mean_mid_point_x;
